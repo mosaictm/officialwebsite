@@ -1,0 +1,369 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap');
+
+@font-face {
+  font-family: 'ROG LyonsType Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('ROG LyonsType Regular'), url('/fonts/ROGLyonsTypeRegular3.woff') format('woff');
+}
+
+/*@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: currentColor; } /* Use text color for cursor *
+}
+
+.animate-blink {
+  /* Simulating a border-right to act as a cursor */
+  /* Using border-right makes it easier to align with RTL text *
+  border-right: 0.15em solid currentColor; 
+  animation: blink-caret 0.75s step-end infinite;
+  margin-right: 0.08em; /* Small space after text before cursor *
+}*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer utilities {
+  /* Hide scrollbars in WebKit (Chrome, Safari) */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbars in Firefox */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE 10+ */
+    scrollbar-width: none;     /* Firefox */
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 220 100% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 100% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 80%;
+
+    --accent: 217 100% 47%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 220 100% 58%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 12%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 220 100% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 220 100% 58%;
+  }
+
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 7%;
+
+    --card: 0 0% 95%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 95%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 220 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 100% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 90%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 217 100% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --ring: 220 100% 50%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+    direction: rtl;
+    /* REMOVE snap properties from html */
+    /* scroll-snap-type: y mandatory; */
+    /* scroll-padding-top: 4.5rem; */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+  }
+
+  body {
+    @apply bg-background text-foreground font-opensans transition-colors duration-300;
+    overflow-x: hidden; /* Keep this on body */
+    /* REMOVE overflow-x: hidden here if you put it on the main container in Index.tsx */
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-montserrat font-semibold;
+  }
+}
+
+@layer components {
+
+  /* ADD snap container styles */
+  .snap-container {
+    @apply h-screen overflow-y-scroll; /* Make this the scrolling element */
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: 0rem; /* Adjust to match your header height exactly */
+    /* Hide scrollbar for the container */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+  }
+  .snap-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* MODIFY section styles */
+  section {
+    scroll-snap-align: end; /* Keep snap align */
+    scroll-margin-top: -3rem;
+    @apply pt-16 md:pt-20 min-h-screen flex flex-col justify-center; /* Keep min-height only for sections */
+  }
+
+  /* MODIFY footer styles */
+  footer {
+    scroll-snap-align: start; /* Keep snap align */
+    /* scroll-margin-top: -1rem; REMOVE this */
+    /* @apply pt-16 md:pt-20 min-h-screen flex flex-col justify-center; REMOVE min-h-screen */
+    @apply pt-16 md:pt-20 flex flex-col justify-center; /* Footer should not be min-h-screen */
+     /* Padding is handled internally by py-12 in Footer.tsx, but keep pt for potential scroll offset */
+  }
+
+  .container-section {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold mb-12 text-center relative;
+    padding-top: 0.5rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .section-title::after {
+    content: "";
+    @apply absolute w-24 h-1 bg-primary left-1/2 -translate-x-1/2 bottom-0 rounded-full mt-2 shadow-glow;
+  }
+
+  .btn-primary {
+    @apply bg-primary hover:bg-primary/80 text-primary-foreground font-semibold py-3 px-6 rounded-md transition-colors duration-300;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold py-3 px-6 rounded-md transition-colors duration-300;
+  }
+
+  .hexagon-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-8;
+  }
+
+  .card-service {
+    @apply bg-card/50 backdrop-blur-sm border border-primary/30 rounded-lg p-6 transition-all hover:border-primary hover:shadow-md hover:shadow-primary/20;
+  }
+
+  .testimonial-card {
+    @apply bg-card/50 backdrop-blur-lg border border-primary/20 rounded-lg p-6 transition-all hover:border-primary/40;
+  }
+
+  /* Background patterns */
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, rgba(39, 110, 255, 0.1) 1px, transparent 1px),
+                     linear-gradient(to bottom, rgba(39, 110, 255, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  .bg-dots-pattern {
+    background-image: radial-gradient(rgba(39, 110, 255, 0.2) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Animation utilities */
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+  .hover-glow:hover {
+    filter: drop-shadow(0 0 8px rgba(39, 110, 255, 0.5));
+  }
+
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+  .shimmer::before {
+    @apply absolute inset-0;
+    content: '';
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+  }
+
+  /* New additions */
+  .shadow-glow {
+    filter: drop-shadow(0 0 5px rgba(39, 110, 255, 0.5));
+  }
+
+  .tagline-container {
+    @apply inline-block relative px-6 py-3 rounded-lg overflow-hidden;
+    background: linear-gradient(125deg, rgba(39, 110, 255, 0.2), rgba(39, 110, 255, 0.1));
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(39, 110, 255, 0.3);
+    box-shadow: 0 0 15px rgba(39, 110, 255, 0.2);
+  }
+
+  .tagline-text {
+    @apply font-semibold text-lg;
+    background: linear-gradient(90deg, #ffffff, #3399FF);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .service-item {
+    @apply flex items-center gap-3 px-4 py-2 rounded-md;
+  }
+
+  .service-indicator {
+    @apply w-2 h-2 rounded-full bg-primary transition-all duration-150 ease-in-out;
+    box-shadow: 0 0 10px rgba(39, 110, 255, 0.7);
+  }
+
+  #home { /* Targeting HeroSection via its ID */
+    scroll-snap-align: start; /* Ensure hero snaps */
+    @apply min-h-screen flex items-center; /* Keep min-height for hero */
+  }
+}
+
+
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes pulse-light {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes rotate-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+.animate-pulse-light {
+  animation: pulse-light 4s ease-in-out infinite;
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 20s linear infinite;
+}
+
+@keyframes parallax-shift {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-5px, -5px);
+  }
+}
+
+.parallax-element {
+  animation: parallax-shift 8s ease-in-out infinite;
+}
+
+/*@layer utilities {
+  @keyframes fadeOnly {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-only {
+    animation: fadeOnly 0.5s ease-out forwards;
+  }
+}*/
