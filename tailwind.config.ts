@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -147,6 +146,20 @@ export default {
 					'100%': {
 						backgroundPosition: '500px 0'
 					}
+				},
+				'blink': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0' }
+				},
+				'wave-ripple': {
+					'0%': {
+						transform: 'scale(1)',
+						opacity: '0.6'
+					},
+					'100%': {
+						transform: 'scale(4)',
+						opacity: '0'
+					}
 				}
 			},
 			animation: {
@@ -158,7 +171,11 @@ export default {
 				'float-slow': 'float 8s ease-in-out infinite',
 				'pulse-light': 'pulse-light 4s ease-in-out infinite',
 				'rotate-slow': 'rotate-slow 20s linear infinite',
-				'shimmer': 'shimmer 2s infinite linear'
+				'shimmer': 'shimmer 2s infinite linear',
+				'blink': 'blink 1s step-start infinite',
+				'wave-1': 'wave-ripple 2s infinite ease-out',
+				'wave-2': 'wave-ripple 2s infinite ease-out 0.6s',
+				'wave-3': 'wave-ripple 2s infinite ease-out 1.2s',
 			},
 			fontFamily: {
 				montserrat: ['Montserrat', 'sans-serif'],

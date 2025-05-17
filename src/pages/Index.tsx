@@ -28,7 +28,6 @@ const Index = () => {
           <AboutSection />
           <ServicesSection />
           <PortfolioSection />
-          {/* <TestimonialsSection /> */} {/* Uncomment if you have this component */}
           <ContactSection />
           <Footer />
         </div>

@@ -1,64 +1,83 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-import useSmoothScroll from '@/hooks/useSmoothScroll'; // 1. IMPORT THE HOOK
+import useSmoothScroll from '@/hooks/useSmoothScroll';
 import logoCropped from '@/imgs/logoPNG.webp';
 
 const HeroSection = () => {
   const { ref: textRef, isVisible: textVisible } = useScrollAnimation<HTMLDivElement>();
   const { ref: logoContainerRef, isVisible: logoVisible } = useScrollAnimation<HTMLDivElement>({ threshold: 0.2 });
-  const scrollToSection = useSmoothScroll(); // 2. USE THE HOOK
+  const { ref: scrollBtnRef, isVisible: scrollBtnVisible } = useScrollAnimation<HTMLDivElement>({ threshold: 0.1 });
+  const scrollToSection = useSmoothScroll();
 
   // State for the dynamic part of the headline
   const [dynamicText, setDynamicText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [loopNum, setLoopNum] = useState(0);
-  const [typingSpeed, setTypingSpeed] = useState(10);
+  const [isPaused, setIsPaused] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(75);
 
-  const wordsToRotate = [" مذهلة", " رائعة", " مبتكرة"];
-  const period = 1000;
+  const wordsToRotate = [" مذهلة", "مميزة", " مبتكرة"];
+  const delayAfterWord = 1500;
+  const delayBeforeDelete = 800;
+  const deleteSpeed = 75;
+  const typingVariation = 50;
 
   useEffect(() => {
     if (!textVisible) {
+      return;
+    }
+
+    let timer: ReturnType<typeof setTimeout>;
+
+    const tick = () => {
+      let i = loopNum % wordsToRotate.length;
+      let fullText = wordsToRotate[i];
+
+      if (isPaused) {
+        timer = setTimeout(() => {
+          setIsPaused(false);
+          if (!isDeleting) {
+            setIsDeleting(true);
+          } else {
+            setIsDeleting(false);
+            setLoopNum(prevLoopNum => prevLoopNum + 1);
+          }
+        }, isDeleting ? delayBeforeDelete : delayAfterWord);
         return;
-    }
-    let ticker = setInterval(() => {
-      tick();
-    }, typingSpeed);
-    return () => {
-      clearInterval(ticker);
+      }
+
+      let updatedText = isDeleting
+        ? fullText.substring(0, dynamicText.length - 1)
+        : fullText.substring(0, dynamicText.length + 1);
+
+      setDynamicText(updatedText);
+
+      const baseSpeed = isDeleting ? deleteSpeed : 150;
+      const randomVariation = Math.floor(Math.random() * typingVariation);
+      const nextSpeed = baseSpeed + randomVariation;
+      
+      if (isDeleting && updatedText === '') {
+        setIsPaused(true);
+      } else if (!isDeleting && updatedText === fullText) {
+        setIsPaused(true);
+      } else {
+        timer = setTimeout(tick, nextSpeed);
+      }
     };
+
+    timer = setTimeout(tick, typingSpeed);
+    return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dynamicText, textVisible]);
+  }, [dynamicText, isDeleting, isPaused, textVisible]);
 
-  const tick = () => {
-    let i = loopNum % wordsToRotate.length;
-    let fullText = wordsToRotate[i];
-    let updatedText = isDeleting
-      ? fullText.substring(0, dynamicText.length - 1)
-      : fullText.substring(0, dynamicText.length + 1);
-
-    setDynamicText(updatedText);
-
-    if (isDeleting) {
-      setTypingSpeed(prevSpeed => Math.max(5, prevSpeed / 1.9)); // Ensure speed doesn't become too small
-    } else {
-        setTypingSpeed(10);
-    }
-
-    if (!isDeleting && updatedText === fullText) {
-      setIsDeleting(true);
-      setTypingSpeed(period);
-    } else if (isDeleting && updatedText === '') {
-      setIsDeleting(false);
-      setLoopNum(loopNum + 1);
-      setTypingSpeed(500);
-    }
-  };
-
-  // 3. CREATE A HANDLER FOR THE BUTTON CLICK
   const handleStartProjectClick = () => {
-    scrollToSection('#contact'); // Or whatever the ID of your target section is
+    scrollToSection('#contact');
+  };
+  
+  const handleScrollDown = () => {
+    // Find the next section after "home"
+    scrollToSection('#about'); // Adjust this to your actual next section ID
   };
 
   return (
@@ -83,21 +102,19 @@ const HeroSection = () => {
               textVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight h-[3em] md:h-[2.5em]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
               <span className="block">نحوّل رؤيتك إلى</span>
-              <span className="text-mosaic-blue-light">تجربة رقمية</span>
-              <span className="text-mosaic-blue-light">
-                {dynamicText}
-                <span className="animate-blink"></span> {/* Make sure animate-blink CSS is defined */}
-              </span>
+              <div className="flex text-mosaic-blue-light mt-4">
+                <span>تجربة رقمية</span>
+                <span className="text-mosaic-blue-light mr-4">{dynamicText}</span>
+              </div>
             </h1>
             <p className="text-lg text-mosaic-gray mb-8">
               فريق متخصص في تطوير المواقع الإلكترونية، تطبيقات الجوال، والفن الرقمي المبتكر. نقدم حلولاً مخصصة تناسب احتياجاتك الفريدة.
             </p>
-            {/* 4. APPLY THE HANDLER TO THE BUTTON'S onClick */}
             <Button
               className="btn-primary text-lg relative overflow-hidden group mx-auto"
-              onClick={handleStartProjectClick} // MODIFIED HERE
+              onClick={handleStartProjectClick}
             >
                 <span className="relative z-10">دعنا نبدأ مشروعك</span>
                 <span className="absolute inset-0 bg-mosaic-blue-dark transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300"></span>
@@ -128,6 +145,32 @@ const HeroSection = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Down Arrow Button with Wave Effect */}
+      <div 
+        ref={scrollBtnRef}
+        className={`absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 transition-all duration-1000 ${
+          scrollBtnVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="flex flex-col items-center">
+          <button 
+            onClick={handleScrollDown}
+            className="scroll-down-btn relative flex justify-center items-center w-14 h-14 rounded-full bg-mosaic-blue hover:bg-mosaic-blue transition-colors duration-300 animate-float"
+            aria-label="Scroll down"
+          >
+            {/* Down Arrow */}
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+            
+            {/* Wave Effect - Multiple expanding circles */}
+            <span className="absolute w-full h-full rounded-full bg-mosaic-blue-light/70 animate-wave-1"></span>
+            <span className="absolute w-full h-full rounded-full bg-mosaic-blue-light/50 animate-wave-2"></span>
+            <span className="absolute w-full h-full rounded-full bg-mosaic-blue-light/30 animate-wave-3"></span>
+          </button>
         </div>
       </div>
     </section>

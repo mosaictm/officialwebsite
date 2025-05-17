@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 import { PhoneIcon, MailIcon, MapPinIcon } from 'lucide-react';
-import emailjs from '@emailjs/browser'; // 1. IMPORT EMAILJS
+import emailjs from '@emailjs/browser';
 
 // Define the type for focusable elements
 type FocusableInteractiveElement = HTMLInputElement | HTMLTextAreaElement;
@@ -104,6 +104,11 @@ const ContactSection = () => {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Initialize EmailJS with your public key
+  useEffect(() => {
+    emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "");
+  }, []);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -129,10 +134,10 @@ const ContactSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // 2. DEFINE YOUR EMAILJS CREDENTIALS AND TEMPLATE PARAMS
-    const SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';       // Replace with your actual Service ID
-    const TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';     // Replace with your actual Template ID
-    const PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';       // Replace with your actual Public Key (User ID)
+    // 2. YOUR EMAILJS CREDENTIALS - REPLACE THESE VALUES
+    const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;  // From your EmailJS dashboard
+    const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID; // From your Email Templates section
+    const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;  // Your EmailJS User ID / Public Key
 
     // This object's keys MUST match the variables in your EmailJS template
     const templateParams = {
@@ -141,8 +146,6 @@ const ContactSection = () => {
       phone: formData.phone,
       message: formData.message,
       // Add any other variables your template expects
-      // For example, if your template has {{website_name}}:
-      // website_name: "Mosaic Team Site"
     };
 
     // 3. SEND THE EMAIL USING EMAILJS
@@ -342,7 +345,9 @@ const ContactSection = () => {
               <h3 className="text-xl font-bold mb-4">تابعنا على</h3>
               <div className="flex space-x-4 space-x-reverse">
                 <a 
-                  href="#" 
+                  href="https://www.facebook.com/mosaictmpage" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-mosaic-blue/10 flex items-center justify-center text-mosaic-blue hover:bg-mosaic-blue hover:text-white transition-colors"
                   aria-label="Facebook"
                 >
@@ -363,7 +368,7 @@ const ContactSection = () => {
                   </svg>
                 </a>
                 
-                <a 
+                {/* <a 
                   href="#" 
                   className="w-10 h-10 rounded-full bg-mosaic-blue/10 flex items-center justify-center text-mosaic-blue hover:bg-mosaic-blue hover:text-white transition-colors"
                   aria-label="LinkedIn"
@@ -371,7 +376,7 @@ const ContactSection = () => {
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M19 3A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H19M18.5 18.5V13.2A3.26 3.26 0 0 0 15.24 9.94C14.39 9.94 13.4 10.46 12.92 11.24V10.13H10.13V18.5H12.92V13.57C12.92 12.8 13.54 12.17 14.31 12.17A1.4 1.4 0 0 1 15.71 13.57V18.5H18.5M6.88 8.56A1.68 1.68 0 0 0 8.56 6.88C8.56 5.95 7.81 5.19 6.88 5.19A1.69 1.69 0 0 0 5.19 6.88C5.19 7.81 5.95 8.56 6.88 8.56M8.27 18.5V10.13H5.5V18.5H8.27Z" />
                   </svg>
-                </a>
+                </a> */}
               </div>
             </div>
           </div>

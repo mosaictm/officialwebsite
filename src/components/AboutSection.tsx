@@ -101,7 +101,6 @@ const AboutSection = () => {
               contentVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-(-20px)'
             }`}
           >
-            <h3 className="text-2xl md:text-3xl font-bold mb-4 text-mosaic-blue">قصة فريقنا</h3>
             <p className="text-lg mb-6 text-mosaic-gray">
               نحن فريق من المبدعين والمطورين المتخصصين في إنشاء تجارب رقمية استثنائية. 
               نجمع بين المهارات التقنية المتقدمة والرؤية الإبداعية لتقديم حلول تلبي احتياجات عملائنا.
