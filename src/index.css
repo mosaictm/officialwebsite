@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap');
 
 @font-face {
   font-family: 'ROG LyonsType Regular';
@@ -125,13 +125,13 @@
   }
 
   body {
-    @apply bg-background text-foreground font-opensans transition-colors duration-300;
+    @apply bg-background text-foreground font-cairo transition-colors duration-300;
     overflow-x: hidden; /* Keep this on body */
     /* REMOVE overflow-x: hidden here if you put it on the main container in Index.tsx */
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-montserrat font-semibold;
+    @apply font-cairo font-semibold;
   }
 }
 
@@ -140,28 +140,61 @@
   /* ADD snap container styles */
   .snap-container {
     @apply h-screen overflow-y-scroll; /* Make this the scrolling element */
-    scroll-snap-type: y mandatory;
-    scroll-padding-top: 0rem; /* Adjust to match your header height exactly */
     /* Hide scrollbar for the container */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* IE and Edge */
   }
+
+  /* Apply snap scrolling only on larger screens (desktop/PC) */
+  @media (min-width: 768px) {
+    .snap-container {
+      scroll-snap-type: y mandatory;
+      scroll-padding-top: 0rem;
+    }
+    
+    section {
+      scroll-snap-align: end; 
+      scroll-margin-top: -3rem;
+    }
+    
+    footer {
+      scroll-snap-align: start;
+    }
+    
+    #home { 
+      scroll-snap-align: start;
+    }
+  }
+
   .snap-container::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
 
   /* MODIFY section styles */
   section {
-    scroll-snap-align: end; /* Keep snap align */
-    scroll-margin-top: -3rem;
     @apply pt-16 md:pt-20 min-h-screen flex flex-col justify-center; /* Keep min-height only for sections */
+  }
+
+  /* Reduce spacing between sections on mobile */
+  @media (max-width: 767px) {
+    section {
+      min-height: 85vh; /* Reduce minimum height on mobile */
+      padding-top: 3rem; /* Reduce top padding */
+      padding-bottom: 0rem; /* Add bottom padding */
+      margin-bottom: -5rem; /* Negative margin to pull sections closer */
+    }
+    
+    .container-section {
+      @apply py-4; /* Reduce vertical padding inside sections */
+    }
+    
+    .section-title {
+      @apply mb-6; /* Reduce margin below section titles */
+    }
   }
 
   /* MODIFY footer styles */
   footer {
-    scroll-snap-align: start; /* Keep snap align */
-    /* scroll-margin-top: -1rem; REMOVE this */
-    /* @apply pt-16 md:pt-20 min-h-screen flex flex-col justify-center; REMOVE min-h-screen */
     @apply pt-16 md:pt-20 flex flex-col justify-center; /* Footer should not be min-h-screen */
      /* Padding is handled internally by py-12 in Footer.tsx, but keep pt for potential scroll offset */
   }
@@ -171,7 +204,7 @@
   }
 
   .section-title {
-    @apply text-3xl md:text-4xl font-bold mb-12 text-center relative;
+    @apply text-3xl md:text-4xl font-cairo font-bold mb-12 text-center relative;
     padding-top: 0.5rem;
     padding-bottom: 1.25rem;
   }
@@ -182,11 +215,11 @@
   }
 
   .btn-primary {
-    @apply bg-primary hover:bg-primary/80 text-primary-foreground font-semibold py-3 px-6 rounded-md transition-colors duration-300;
+    @apply bg-primary hover:bg-primary/80 text-primary-foreground font-cairo font-semibold py-3 px-6 rounded-md transition-colors duration-300;
   }
 
   .btn-outline {
-    @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold py-3 px-6 rounded-md transition-colors duration-300;
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-cairo font-semibold py-3 px-6 rounded-md transition-colors duration-300;
   }
 
   .hexagon-grid {
@@ -255,7 +288,7 @@
   }
 
   .tagline-text {
-    @apply font-semibold text-lg;
+    @apply font-cairo font-semibold text-lg;
     background: linear-gradient(90deg, #ffffff, #3399FF);
     background-clip: text;
     -webkit-background-clip: text;

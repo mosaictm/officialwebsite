@@ -7,7 +7,6 @@ import logoCropped from '@/imgs/logoPNG.webp';
 const HeroSection = () => {
   const { ref: textRef, isVisible: textVisible } = useScrollAnimation<HTMLDivElement>();
   const { ref: logoContainerRef, isVisible: logoVisible } = useScrollAnimation<HTMLDivElement>({ threshold: 0.2 });
-  const { ref: scrollBtnRef, isVisible: scrollBtnVisible } = useScrollAnimation<HTMLDivElement>({ threshold: 0.1 });
   const scrollToSection = useSmoothScroll();
 
   // State for the dynamic part of the headline
@@ -71,13 +70,35 @@ const HeroSection = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dynamicText, isDeleting, isPaused, textVisible]);
 
-  const handleStartProjectClick = () => {
-    scrollToSection('#contact');
-  };
-  
-  const handleScrollDown = () => {
-    // Find the next section after "home"
-    scrollToSection('#about'); // Adjust this to your actual next section ID
+  const handleStartProjectClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default anchor behavior
+    
+    // Add debugging
+    console.log('Button clicked, attempting to scroll to #about section');
+    const aboutElement = document.querySelector('#about');
+    console.log('About section element found:', aboutElement);
+    
+    // Try using our custom hook first
+    scrollToSection('#about', undefined, 80);
+    
+    // As a backup, also try to directly scroll the container
+    setTimeout(() => {
+      const snapContainer = document.querySelector('.snap-container');
+      if (snapContainer && aboutElement) {
+        console.log('Using direct scrolling as backup');
+        
+        // Get the position of the about section relative to the container
+        const containerRect = snapContainer.getBoundingClientRect();
+        const aboutRect = aboutElement.getBoundingClientRect();
+        const scrollPosition = aboutRect.top - containerRect.top + snapContainer.scrollTop;
+        
+        // Scroll to the section
+        snapContainer.scrollTo({
+          top: scrollPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 100); // Small delay to ensure we don't conflict with the hook
   };
 
   return (
@@ -112,13 +133,18 @@ const HeroSection = () => {
             <p className="text-lg text-mosaic-gray mb-8">
               فريق متخصص في تطوير المواقع الإلكترونية، تطبيقات الجوال، والفن الرقمي المبتكر. نقدم حلولاً مخصصة تناسب احتياجاتك الفريدة.
             </p>
-            <Button
-              className="btn-primary text-lg relative overflow-hidden group mx-auto"
-              onClick={handleStartProjectClick}
-            >
-                <span className="relative z-10">دعنا نبدأ مشروعك</span>
-                <span className="absolute inset-0 bg-mosaic-blue-dark transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300"></span>
-            </Button>
+            <div className="flex justify-center md:justify-start">
+              <Button
+                className="btn-primary text-base md:text-lg relative overflow-hidden group w-4/5 md:w-auto py-4 md:py-3"
+                onClick={handleStartProjectClick}
+                asChild
+              >
+                <a href="#about">
+                  <span className="relative z-10 text-lg md:text-base font-bold">تعرّف علينا</span>
+                  <span className="absolute inset-0 bg-mosaic-blue-dark transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300"></span>
+                </a>
+              </Button>
+            </div>
             <div className="mt-8 mt-15">
               {/* ... (rest of your commented out code remains the same) */}
             </div>
@@ -145,32 +171,6 @@ const HeroSection = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Down Arrow Button with Wave Effect */}
-      <div 
-        ref={scrollBtnRef}
-        className={`absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 transition-all duration-1000 ${
-          scrollBtnVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <div className="flex flex-col items-center">
-          <button 
-            onClick={handleScrollDown}
-            className="scroll-down-btn relative flex justify-center items-center w-14 h-14 rounded-full bg-mosaic-blue hover:bg-mosaic-blue transition-colors duration-300 animate-float"
-            aria-label="Scroll down"
-          >
-            {/* Down Arrow */}
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-            </svg>
-            
-            {/* Wave Effect - Multiple expanding circles */}
-            <span className="absolute w-full h-full rounded-full bg-mosaic-blue-light/70 animate-wave-1"></span>
-            <span className="absolute w-full h-full rounded-full bg-mosaic-blue-light/50 animate-wave-2"></span>
-            <span className="absolute w-full h-full rounded-full bg-mosaic-blue-light/30 animate-wave-3"></span>
-          </button>
         </div>
       </div>
     </section>

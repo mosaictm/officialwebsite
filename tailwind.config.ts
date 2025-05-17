@@ -180,6 +180,7 @@ export default {
 			fontFamily: {
 				montserrat: ['Montserrat', 'sans-serif'],
 				opensans: ['Open Sans', 'sans-serif'],
+				cairo: ['Cairo', 'sans-serif'],
 			},
 		}
 	},
