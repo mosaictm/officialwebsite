@@ -115,7 +115,7 @@ const Footer = () => {
                 <input
                   type="email"
                   placeholder="بريدك الإلكتروني"
-                  className="bg-mosaic-dark border border-mosaic-blue/20 focus:border-mosaic-blue w-full sm:w-3/5 md:w-1/4 px-3 py-1.5 md:px-4 md:py-2 text-sm focus:outline-none text-white placeholder-mosaic-gray"
+                  className="bg-mosaic-dark border border-mosaic-blue/20 focus:border-mosaic-blue w-full lg:w-full sm:w-3/5 md:w-1/4 px-3 py-1.5 md:px-4 md:py-2 text-sm focus:outline-none text-white placeholder-mosaic-gray"
                   // Removed  to let it take full width available within the form group
                   style={{ direction: 'rtl' }}
                 />
