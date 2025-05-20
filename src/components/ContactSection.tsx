@@ -111,7 +111,20 @@ const ContactSection = () => {
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    let processedValue = value;
+
+    if (name === 'name') {
+      // Allows Unicode letters (incl. Arabic), marks (accents/diacritics),
+      // spaces, apostrophes, hyphens, and periods.
+      // Strips out numbers and other special characters.
+      processedValue = value.replace(/[^\p{L}\p{M}\s'\-.]/gu, '');
+    } else if (name === 'phone') {
+      // Only allow numbers, spaces, +, (, ), -
+      // This is a common set of characters for phone number input.
+      processedValue = value.replace(/[^0-9\s()+\-]/g, '');
+    }
+
+    setFormData(prev => ({ ...prev, [name]: processedValue }));
   };
   
   // useEffect to manage the event listeners for the position change handler
@@ -141,10 +154,10 @@ const ContactSection = () => {
 
     // This object's keys MUST match the variables in your EmailJS template
     const templateParams = {
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      message: formData.message,
+      name: formData.name.trim(), // Good practice to trim whitespace for names
+      email: formData.email.trim(),
+      phone: formData.phone.replace(/\s/g, ""), // Remove spaces for a cleaner phone number, or use a library for full E.164 normalization
+      message: formData.message.trim(),
       // Add any other variables your template expects
     };
 
@@ -250,9 +263,10 @@ const ContactSection = () => {
                   dir='ltr'
                   id="phone"
                   name="phone"
+                  type="tel" // Good practice for phone number inputs
                   autoComplete="off"
                   minLength={9}
-                  maxLength={15}
+                  maxLength={15} // Max length for E.164 is + and 15 digits
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="+963 XXX XXX XXX"
