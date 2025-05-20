@@ -5,6 +5,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 import { PhoneIcon, MailIcon, MapPinIcon } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+// Import the library (use /min for a smaller bundle size if preferred)
+import { parsePhoneNumberFromString } from 'libphonenumber-js'; // if using full metadata
+// or import { parsePhoneNumberFromString } from 'libphonenumber-js/min'; // for smaller bundle, less metadata
 
 // Define the type for focusable elements
 type FocusableInteractiveElement = HTMLInputElement | HTMLTextAreaElement;
@@ -119,8 +122,8 @@ const ContactSection = () => {
       // Strips out numbers and other special characters.
       processedValue = value.replace(/[^\p{L}\p{M}\s'\-.]/gu, '');
     } else if (name === 'phone') {
-      // Only allow numbers, spaces, +, (, ), -
-      // This is a common set of characters for phone number input.
+      // Only allow common phone number characters for typing.
+      // Validation of the format happens on submit.
       processedValue = value.replace(/[^0-9\s()+\-]/g, '');
     }
 
@@ -147,6 +150,22 @@ const ContactSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // --- START: Phone Number Validation ---
+    // You can provide a default country if most users are from one region, e.g., 'SY' for Syria
+    // This helps parsing if the country code '+' is missing.
+    const phoneNumberObj = parsePhoneNumberFromString(formData.phone); 
+
+    if (!phoneNumberObj || !phoneNumberObj.isValid()) {
+      toast({
+        title: "رقم الجوال غير صحيح",
+        description: "يرجى إدخال رقم جوال صحيح.", // "Please enter a valid phone number."
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+      return; // Stop submission if the phone number is invalid
+    }
+    // --- END: Phone Number Validation ---
+
     // 2. YOUR EMAILJS CREDENTIALS - REPLACE THESE VALUES
     const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;  // From your EmailJS dashboard
     const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID; // From your Email Templates section
@@ -154,9 +173,9 @@ const ContactSection = () => {
 
     // This object's keys MUST match the variables in your EmailJS template
     const templateParams = {
-      name: formData.name.trim(), // Good practice to trim whitespace for names
+      name: formData.name.trim(),
       email: formData.email.trim(),
-      phone: formData.phone.replace(/\s/g, ""), // Remove spaces for a cleaner phone number, or use a library for full E.164 normalization
+      phone: phoneNumberObj.format('E.164'), // Send in standardized E.164 format
       message: formData.message.trim(),
       // Add any other variables your template expects
     };
@@ -175,7 +194,8 @@ const ContactSection = () => {
       .catch((error) => {
         console.error('EmailJS FAILED...', error);
         let description = "عذراً، لم نتمكن من إرسال رسالتك. يرجى المحاولة مرة أخرى أو التواصل معنا مباشرة.";
-        if (error && typeof error === 'object' && 'text' in error) {
+        // Ensure error.text is a string before using it to prevent runtime errors
+        if (error && typeof error === 'object' && 'text' in error && typeof error.text === 'string') { 
             description = `فشل الإرسال: ${error.text || 'خطأ غير معروف من EmailJS'}`;
         } else if (error instanceof Error) {
             description = `فشل الإرسال: ${error.message}`;
@@ -224,8 +244,8 @@ const ContactSection = () => {
                   <Input
                     id="name"
                     name="name"
-                    minLength={5}
-                    maxLength={30}
+                    minLength={5} // Consider adjusting if too restrictive for some international names
+                    maxLength={50} // Increased for broader international names
                     value={formData.name}
                     onChange={handleChange}
                     autoComplete="off"
@@ -265,8 +285,10 @@ const ContactSection = () => {
                   name="phone"
                   type="tel" // Good practice for phone number inputs
                   autoComplete="off"
-                  minLength={9}
-                  maxLength={15} // Max length for E.164 is + and 15 digits
+                  // minLength/maxLength are less critical for validation now libphonenumber-js handles it,
+                  // but can provide a basic UI hint.
+                  minLength={7}  // Looser minLength
+                  maxLength={25} // Increased maxLength to allow varied input formats before libphonenumber-js processes it
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="+963 XXX XXX XXX"
