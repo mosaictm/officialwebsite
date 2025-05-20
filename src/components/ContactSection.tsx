@@ -120,7 +120,7 @@ const ContactSection = () => {
       // Allows Unicode letters (incl. Arabic), marks (accents/diacritics),
       // spaces, apostrophes, hyphens, and periods.
       // Strips out numbers and other special characters.
-      processedValue = value.replace(/[^\p{L}\p{M}\s'\-.]/gu, '');
+      processedValue = value.replace(/[^\p{L}\p{M}\s'\-]/gu, '');
     } else if (name === 'phone') {
       // Only allow common phone number characters for typing.
       // Validation of the format happens on submit.
