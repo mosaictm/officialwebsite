@@ -106,7 +106,7 @@ const Footer = () => {
             
             {/* Newsletter */}
             {/* On small screens, this might take full width if other cols are hidden, or span 2 if you adjust grid-cols */}
-            <div className="col-span-2 lg:col-span-1 mt-4 md:mt-0">
+            <div className="col-span-2 lg:col-span-1 md:mt-0">
               <h4 className="text-base md:text-lg font-semibold mb-3 md:mb-6 text-white">النشرة البريدية</h4>
               <p className="text-mosaic-gray text-xs md:text-sm mb-3 md:mb-4">
                 اشترك في نشرتنا البريدية للحصول على آخر الأخبار والعروض.
