@@ -47,9 +47,11 @@ const Footer = () => {
     <>
       <footer className="bg-mosaic-dark/95 border-t border-mosaic-blue/10 py-6 md:py-12 pt-10 md:pt-20">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12">
+          {/* Adjusted grid columns for smaller screens to accommodate hidden sections */}
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-12">
             {/* Logo & About */}
-            <div className="col-span-2 md:col-span-1 mb-4 md:mb-0">
+            {/* On small screens, this might take full width if other cols are hidden, or span 2 if you adjust grid-cols */}
+            <div className="col-span-2 lg:col-span-1 mb-4 md:mb-0">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-6 md:w-8 h-6 md:h-8 rounded-full flex items-center justify-center shadow-glow">
                   <img src={logo} alt="Mosaic Team Logo" />
@@ -64,8 +66,8 @@ const Footer = () => {
               </div>
             </div>
             
-            {/* Quick Links */}
-            <div>
+            {/* Quick Links - Hidden on sm and md, visible on lg and up */}
+            <div className="hidden lg:block"> {/* <--- CHANGE HERE */}
               <h4 className="text-base md:text-lg font-semibold mb-3 md:mb-6 text-white">روابط سريعة</h4>
               <ul className="space-y-2 md:space-y-3">
                 {quickLinks.map((item, index) => (
@@ -83,8 +85,8 @@ const Footer = () => {
               </ul>
             </div>
             
-            {/* Services */}
-            <div>
+            {/* Services - Hidden on sm and md, visible on lg and up */}
+            <div className="hidden lg:block"> {/* <--- CHANGE HERE */}
               <h4 className="text-base md:text-lg font-semibold mb-3 md:mb-6 text-white">خدماتنا</h4>
               <ul className="space-y-2 md:space-y-3">
                 {serviceItems.map((item, index) => (
@@ -103,7 +105,8 @@ const Footer = () => {
             </div>
             
             {/* Newsletter */}
-            <div className="col-span-2 md:col-span-1 mt-4 md:mt-0">
+            {/* On small screens, this might take full width if other cols are hidden, or span 2 if you adjust grid-cols */}
+            <div className="col-span-2 lg:col-span-1 mt-4 md:mt-0">
               <h4 className="text-base md:text-lg font-semibold mb-3 md:mb-6 text-white">النشرة البريدية</h4>
               <p className="text-mosaic-gray text-xs md:text-sm mb-3 md:mb-4">
                 اشترك في نشرتنا البريدية للحصول على آخر الأخبار والعروض.
@@ -112,7 +115,8 @@ const Footer = () => {
                 <input
                   type="email"
                   placeholder="بريدك الإلكتروني"
-                  className="bg-mosaic-dark border border-mosaic-blue/20 focus:border-mosaic-blue w-full lg:w-full sm:w-3/5 md:w-1/4 px-3 py-1.5 md:px-4 md:py-2 text-sm focus:outline-none text-white placeholder-mosaic-gray"
+                  className="bg-mosaic-dark border border-mosaic-blue/20 focus:border-mosaic-blue w-full px-3 py-1.5 md:px-4 md:py-2 text-sm focus:outline-none text-white placeholder-mosaic-gray"
+                  // Removed sm:w-3/5 md:w-1/4 to let it take full width available within the form group
                   style={{ direction: 'rtl' }}
                 />
                 <Button type='reset' className="text-xs md:text-sm rounded-l-md rounded-r-none bg-mosaic-blue hover:bg-mosaic-blue-dark border-mosaic-blue px-2 md:px-4">
