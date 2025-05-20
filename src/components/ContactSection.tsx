@@ -155,6 +155,7 @@ const ContactSection = () => {
         toast({
           title: "تم إرسال الرسالة بنجاح",
           description: "سنقوم بالرد عليكم في أقرب وقت ممكن.",
+          className:"bg-mosaic-blue"
         });
         setFormData({ name: '', email: '', phone: '', message: '' }); // Reset form
       })
@@ -341,7 +342,7 @@ const ContactSection = () => {
             </div>
             
             {/* Social Media */}
-            <div>
+            <div className="pr-10">
               <h3 className="text-xl font-bold mb-4">تابعنا على</h3>
               <div className="flex space-x-4 space-x-reverse">
                 <a 
