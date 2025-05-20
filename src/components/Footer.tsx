@@ -13,6 +13,8 @@ import {
   DialogFooter, // If you need a footer in the dialog
   DialogClose // For a close button
 } from "@/components/ui/dialog"; // Assuming you have shadcn/ui Dialog
+import PrivacyPolicyContent from '@/components/PrivacyPolicyContent'; // Import the content
+
 const Footer = () => {
   const scrollToSection = useSmoothScroll();
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false); // State for modal
