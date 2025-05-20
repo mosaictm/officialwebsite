@@ -112,7 +112,7 @@ const Footer = () => {
                 <input
                   type="email"
                   placeholder="بريدك الإلكتروني"
-                  className="bg-mosaic-dark border border-mosaic-blue/20 focus:border-mosaic-blue rounded-r-none rounded-l-none px-3 py-1.5 md:px-4 md:py-2 w-full text-xs md:text-sm focus:outline-none text-white placeholder-mosaic-gray"
+                  className="bg-mosaic-dark border border-mosaic-blue/20 focus:border-mosaic-blue  px-3 py-1.5 md:px-4 md:py-2 w-full md:w-1/2 text-xs md:text-sm focus:outline-none text-white placeholder-mosaic-gray"
                   style={{ direction: 'rtl' }}
                 />
                 <Button type='reset' className="text-xs md:text-sm rounded-l-md rounded-r-none bg-mosaic-blue hover:bg-mosaic-blue-dark border-mosaic-blue px-2 md:px-4">
