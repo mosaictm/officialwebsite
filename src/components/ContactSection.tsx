@@ -20,48 +20,30 @@ function createPositionChangeFocusHandler() {
   const handleHideSuggestionsOnMove = () => {
     const activeElement: Element | null = document.activeElement;
 
-    // 1. Type Guard: Check if the active element is an instance of HTMLInputElement or HTMLTextAreaElement.
     if (
       !(activeElement instanceof HTMLInputElement ||
         activeElement instanceof HTMLTextAreaElement)
     ) {
-      // If no relevant input is active, or something else is active, reset our tracking.
       lastActiveInputElement = null;
       lastKnownPosition = null;
       return;
     }
 
-    // TypeScript now knows activeElement is FocusableInteractiveElement
     const activeInput: FocusableInteractiveElement = activeElement;
 
-    // 2. If the focused input has changed since the last check,
-    // or if this is the first time we're tracking this specific input.
     if (lastActiveInputElement !== activeInput) {
       lastActiveInputElement = activeInput;
       const rect = activeInput.getBoundingClientRect();
       lastKnownPosition = { x: rect.x, y: rect.y };
-      // console.log('Now tracking:', activeInput.id || activeInput.name, 'at', lastKnownPosition);
-      return; // Don't do anything else on the first focus of this element
+      return;
     }
 
-    // 3. If we are here, the same input is still focused. Check its current position.
     const currentRect = activeInput.getBoundingClientRect();
 
-    // 4. Compare current position with the last known position
     if (
       lastKnownPosition &&
       (currentRect.x !== lastKnownPosition.x || currentRect.y !== lastKnownPosition.y)
     ) {
-      // console.log(
-      //   'Input moved!',
-      //   activeInput.id || activeInput.name || activeInput,
-      //   'from',
-      //   lastKnownPosition,
-      //   'to',
-      //   { x: currentRect.x, y: currentRect.y }
-      // );
-
-      // Preserve cursor position if possible
       let selectionStart: number | null = null;
       let selectionEnd: number | null = null;
       try {
@@ -73,11 +55,9 @@ function createPositionChangeFocusHandler() {
 
       activeInput.blur();
 
-      // Refocus. Using requestAnimationFrame for robustness.
       requestAnimationFrame(() => {
-        activeInput.focus({ preventScroll: true }); // <--- FIX: Prevents scrolling on focus
+        activeInput.focus({ preventScroll: true });
 
-        // Restore cursor position
         if (typeof selectionStart === 'number' && typeof selectionEnd === 'number') {
           try {
             activeInput.setSelectionRange(selectionStart, selectionEnd);
@@ -85,11 +65,8 @@ function createPositionChangeFocusHandler() {
             // Ignore if setting selection range fails
           }
         }
-        // console.log('Refocused:', activeInput.id || activeInput.name);
+        lastKnownPosition = { x: currentRect.x, y: currentRect.y }; // Update after refocus and potential layout shift
       });
-
-      // Update the last known position to the new one
-      lastKnownPosition = { x: currentRect.x, y: currentRect.y };
     }
   };
 
@@ -104,61 +81,58 @@ const ContactSection = () => {
     phone: '',
     message: ''
   });
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Initialize EmailJS with your public key
+
   useEffect(() => {
     emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "");
   }, []);
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     let processedValue = value;
 
     if (name === 'name') {
-      // Allows Unicode letters (incl. Arabic), marks (accents/diacritics),
-      // spaces, apostrophes, hyphens, and periods.
-      // Strips out numbers and other special characters.
       processedValue = value.replace(/[^\p{L}\p{M}\s'\-]/gu, '');
     } else if (name === 'phone') {
-      // Only allow common phone number characters for typing.
-      // Validation of the format happens on submit.
       processedValue = value.replace(/[^0-9\s()+\-]/g, '');
     }
 
     setFormData(prev => ({ ...prev, [name]: processedValue }));
   };
-  
-  // useEffect to manage the event listeners for the position change handler
-  useEffect(() => {
-    // Create the handler instance when the component mounts
-    const moveHandler = createPositionChangeFocusHandler();
 
-    // Attach the handler to events that might cause element movement
+  useEffect(() => {
+    const moveHandler = createPositionChangeFocusHandler();
     window.addEventListener('scroll', moveHandler, true);
     window.addEventListener('resize', moveHandler, true);
-
-    // Cleanup function: Remove event listeners when the component unmounts
     return () => {
       window.removeEventListener('scroll', moveHandler, true);
       window.removeEventListener('resize', moveHandler, true);
     };
-  }, []); // Empty dependency array ensures this effect runs only once on mount and unmounts on cleanup
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // --- START: Phone Number Validation ---
-    // You can provide a default country if most users are from one region, e.g., 'SY' for Syria
-    // This helps parsing if the country code '+' is missing.
-    const phoneNumberObj = parsePhoneNumberFromString(formData.phone); 
+    // --- START: Phone Number Validation (MODIFIED PART) ---
+    const rawPhoneNumber = formData.phone.trim();
+    let phoneNumberObj;
+
+    // If the number does not start with a '+', provide 'SY' as the default country.
+    // This helps parse national Syrian numbers like "09..."
+    // and even international Syrian numbers where the user might have omitted the "+", like "9639...".
+    // If the number starts with "+", libphonenumber-js will use the country code from the number itself.
+    if (!rawPhoneNumber.startsWith('+')) {
+      phoneNumberObj = parsePhoneNumberFromString(rawPhoneNumber, 'SY');
+    } else {
+      phoneNumberObj = parsePhoneNumberFromString(rawPhoneNumber);
+    }
 
     if (!phoneNumberObj || !phoneNumberObj.isValid()) {
       toast({
         title: "رقم الجوال غير صحيح",
-        description: "يرجى إدخال رقم جوال صحيح.", // "Please enter a valid phone number."
+        description: "يرجى إدخال رقم جوال صحيح. تأكد من تضمين رمز الدولة إذا كان الرقم دوليًا أو استخدم الصيغة المحلية الصحيحة.", // "Please enter a valid phone number."
         variant: "destructive",
       });
       setIsSubmitting(false);
@@ -166,21 +140,17 @@ const ContactSection = () => {
     }
     // --- END: Phone Number Validation ---
 
-    // 2. YOUR EMAILJS CREDENTIALS - REPLACE THESE VALUES
-    const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;  // From your EmailJS dashboard
-    const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID; // From your Email Templates section
-    const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;  // Your EmailJS User ID / Public Key
+    const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-    // This object's keys MUST match the variables in your EmailJS template
     const templateParams = {
       name: formData.name.trim(),
       email: formData.email.trim(),
       phone: phoneNumberObj.format('E.164'), // Send in standardized E.164 format
       message: formData.message.trim(),
-      // Add any other variables your template expects
     };
 
-    // 3. SEND THE EMAIL USING EMAILJS
     emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
       .then((response) => {
         console.log('EmailJS SUCCESS!', response.status, response.text);
@@ -189,13 +159,12 @@ const ContactSection = () => {
           description: "سنقوم بالرد عليكم في أقرب وقت ممكن.",
           className:"bg-mosaic-blue"
         });
-        setFormData({ name: '', email: '', phone: '', message: '' }); // Reset form
+        setFormData({ name: '', email: '', phone: '', message: '' });
       })
       .catch((error) => {
         console.error('EmailJS FAILED...', error);
         let description = "عذراً، لم نتمكن من إرسال رسالتك. يرجى المحاولة مرة أخرى أو التواصل معنا مباشرة.";
-        // Ensure error.text is a string before using it to prevent runtime errors
-        if (error && typeof error === 'object' && 'text' in error && typeof error.text === 'string') { 
+        if (error && typeof error === 'object' && 'text' in error && typeof error.text === 'string') {
             description = `فشل الإرسال: ${error.text || 'خطأ غير معروف من EmailJS'}`;
         } else if (error instanceof Error) {
             description = `فشل الإرسال: ${error.message}`;
@@ -210,8 +179,6 @@ const ContactSection = () => {
         setIsSubmitting(false);
       });
   };
-
-
 
   return (
     <section id="contact" className="bg-mosaic-dark py-20">
@@ -235,7 +202,7 @@ const ContactSection = () => {
                       aria-hidden="true" 
                       value="" 
                       readOnly 
-                      onChange={()=>{}} // React requires onChange for controlled inputs even if readOnly
+                      onChange={()=>{}}
                       />
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">
@@ -244,8 +211,8 @@ const ContactSection = () => {
                   <Input
                     id="name"
                     name="name"
-                    minLength={5} // Consider adjusting if too restrictive for some international names
-                    maxLength={50} // Increased for broader international names
+                    minLength={5}
+                    maxLength={50}
                     value={formData.name}
                     onChange={handleChange}
                     autoComplete="off"
@@ -283,15 +250,13 @@ const ContactSection = () => {
                   dir='ltr'
                   id="phone"
                   name="phone"
-                  type="tel" // Good practice for phone number inputs
+                  type="tel"
                   autoComplete="off"
-                  // minLength/maxLength are less critical for validation now libphonenumber-js handles it,
-                  // but can provide a basic UI hint.
-                  minLength={7}  // Looser minLength
-                  maxLength={25} // Increased maxLength to allow varied input formats before libphonenumber-js processes it
+                  minLength={7}
+                  maxLength={25}
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+963 XXX XXX XXX"
+                  placeholder="+963 XXX XXX XXX / 09X XXX XXXX" // Updated placeholder
                   required
                   className="bg-mosaic-dark/70 border-mosaic-blue/20 focus:border-mosaic-blue text-right focus:ring-mosaic-blue"
                 />
@@ -413,14 +378,12 @@ const ContactSection = () => {
                   aria-label="X"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    {/* Path for X logo */}
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                   </svg>
                 </a>
 
-                {/* LinkedIn Icon */}
                 <a
-                  href="https://www.linkedin.com/in/yourusername" 
+                  href="https://www.linkedin.com/in/yourusername"  // Remember to replace 'yourusername'
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-mosaic-blue/10 flex items-center justify-center text-mosaic-blue hover:bg-mosaic-blue hover:text-white transition-colors"
