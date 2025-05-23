@@ -406,7 +406,7 @@ const ContactSection = () => {
                 </a>
                 
                <a
-                  href="https://x.com/Mosaictm" {/* <= REPLACE THIS URL */}
+                  href="https://x.com/Mosaictm" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-mosaic-blue/10 flex items-center justify-center text-mosaic-blue hover:bg-mosaic-blue hover:text-white transition-colors"
@@ -420,7 +420,7 @@ const ContactSection = () => {
 
                 {/* LinkedIn Icon */}
                 <a
-                  href="https://www.linkedin.com/in/yourusername" {/* <= REPLACE THIS URL */}
+                  href="https://www.linkedin.com/in/yourusername" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-mosaic-blue/10 flex items-center justify-center text-mosaic-blue hover:bg-mosaic-blue hover:text-white transition-colors"
