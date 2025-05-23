@@ -383,7 +383,7 @@ const ContactSection = () => {
                 </a>
 
                 <a
-                  href="https://www.linkedin.com/in/yourusername"  // Remember to replace 'yourusername'
+                  href="https://www.linkedin.com/in/mosaic-team-303099367/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-mosaic-blue/10 flex items-center justify-center text-mosaic-blue hover:bg-mosaic-blue hover:text-white transition-colors"
