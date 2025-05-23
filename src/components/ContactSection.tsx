@@ -132,7 +132,7 @@ const ContactSection = () => {
     if (!phoneNumberObj || !phoneNumberObj.isValid()) {
       toast({
         title: "رقم الجوال غير صحيح",
-        description: "يرجى إدخال رقم جوال صحيح. تأكد من تضمين رمز الدولة إذا كان الرقم دوليًا أو استخدم الصيغة المحلية الصحيحة.", // "Please enter a valid phone number."
+        description: "يرجى إدخال رقم جوال صحيح. تأكد من تضمين رمز الدولة إذا كان الرقم دوليًا.", // "Please enter a valid phone number."
         variant: "destructive",
       });
       setIsSubmitting(false);
@@ -256,7 +256,7 @@ const ContactSection = () => {
                   maxLength={25}
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+963 XXX XXX XXX / 09X XXX XXXX" // Updated placeholder
+                  placeholder="+963 XXX XXX XXX" // Updated placeholder
                   required
                   className="bg-mosaic-dark/70 border-mosaic-blue/20 focus:border-mosaic-blue text-right focus:ring-mosaic-blue"
                 />
