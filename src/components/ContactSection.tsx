@@ -320,14 +320,13 @@ const ContactSection = () => {
                   <div className="w-10 h-10 rounded-full bg-mosaic-blue/10 flex items-center justify-center text-mosaic-blue ml-4">
                     <PhoneIcon size={20} />
                   </div>
-                  <div>
+                  <div className="flex flex-col"> 
                     <h4 className="font-semibold mb-1">رقم الهاتف</h4>
                     <a href="tel:+963968167947" className="text-mosaic-blue hover:underline" dir='ltr'>
-                      +963 968 167 947
+                     +963 968 167 947
                     </a>
-                    <br>
                     <a href="tel:+963997947085" className="text-mosaic-blue hover:underline" dir='ltr'>
-                      +963 997 947 085
+                     +963 997 947 085
                     </a>
                   </div>
                 </div>
