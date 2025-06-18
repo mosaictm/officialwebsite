@@ -124,7 +124,7 @@ const HeroSection = () => {
             }`}
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              <span className="block">نحوّل رhؤيتك إلى</span>
+              <span className="block">نحوّل رؤيتك إلى</span>
               <div className="flex text-mosaic-blue-light mt-4">
                 <span>تجربة رقمية</span>
                 <span className="text-mosaic-blue-light mr-4">{dynamicText}</span>
